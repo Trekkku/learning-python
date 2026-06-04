@@ -2,8 +2,8 @@ name: Sync Selected Files to GitVerse
 
 on:
   schedule:
-    # Проверка каждые 4 часа
-    - cron: '0 */4 * * *'
+    # Запуск в 1 минуту каждого часа (01:01, 02:01, 03:01 и т.д.)
+    - cron: '1 * * * *'
   workflow_dispatch:
 
 jobs:
