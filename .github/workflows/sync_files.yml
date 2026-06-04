@@ -2,7 +2,7 @@ name: Sync Selected Files to GitVerse
 
 on:
   schedule:
-    # Запуск в 1 минуту каждого часа (01:01, 02:01, 03:01 и т.д.)
+    # Запуск в 1 минуту каждого часа
     - cron: '1 * * * *'
   workflow_dispatch:
 
@@ -10,22 +10,17 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      # 1. Клонируем ваш текущий репозиторий на GitHub со всей историей
       - name: Checkout local repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2. Скачиваем чистый текст (без HTML сайта)
-      - name: Download files from foreign GitHub
+      # Скачиваем оригинал напрямую в шифратор Base64, минуя создание обычного txt файла
+      - name: Download and Encode directly to Base64
         run: |
-          echo "Скачиваем файл по прямой RAW-ссылке..."
-          curl -s -L "https://raw.githack.com/igareck/vpn-configs-for-russia/main/Vless-Reality-White-Lists-Rus-Mobile.txt" -o "igareck.txt"
-          
-          echo "Проверяем начало скачанного файла (для логов):"
-          head -n 5 igareck.txt
+          echo "Скачиваем и кодируем прокси в Base64..."
+          curl -s -L "https://raw.githack.com/igareck/vpn-configs-for-russia/main/Vless-Reality-White-Lists-Rus-Mobile.txt" | base64 -w 0 > igareck_base64.txt
 
-      # 3. Фиксируем изменения и отправляем на GitVerse
       - name: Commit and Push changes
         env:
           GV_TOKEN: ${{ secrets.GITVERSE_TOKEN }}
@@ -36,21 +31,16 @@ jobs:
           git checkout -B main
           
           if [ -n "$(git status --porcelain)" ]; then
-            echo "Обнаружены изменения! Фиксируем..."
-            git add .
-            git commit -m "Авто-обновление прокси: $(date +'%Y-%m-%d %H:%M')"
+            git add igareck_base64.txt
+            git commit -m "Авто-обновление прокси Base64: $(date +'%Y-%m-%d %H:%M')"
             
-            echo "Отправляем изменения в свой GitHub..."
             git push origin main --force
             
-            echo "Настраиваем удаленный сервер GitVerse..."
             git remote set-url gitverse "https://token:${GV_TOKEN}@gitverse.ru/Trekkku/github_trekkku.git" 2>/dev/null || \
             git remote add gitverse "https://token:${GV_TOKEN}@gitverse.ru/Trekkku/github_trekkku.git"
             
-            echo "Отправляем изменения на GitVerse..."
             git push gitverse main --force
-            
-            echo "Синхронизация успешно завершена!"
+            echo "Чистая Base64 подписка успешно синхронизирована!"
           else
-            echo "Файлы полностью совпадают. Обновление не требуется."
+            echo "Изменений в оригинале нет. Пропускаем."
           fi
