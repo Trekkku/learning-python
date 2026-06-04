@@ -1,9 +1,12 @@
 name: Sync Selected Files to GitVerse
 
 on:
+  push:
+    branches:
+      - main
   schedule:
-    # Запуск в 1 минуту каждого часа
-    - cron: '51 * * * *'
+    # Запуск каждые 15 минут для быстрой инициализации баз GitHub
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 jobs:
