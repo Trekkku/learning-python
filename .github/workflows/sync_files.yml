@@ -33,23 +33,26 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           
+          # Явно проверяем, на какой ветке мы находимся внутри контейнера
+          git checkout -B main
+          
           if [ -n "$(git status --porcelain)" ]; then
             echo "Обнаружены обновления в чужих файлах! Фиксируем изменения..."
             
             git add .
             git commit -m "Авто-обновление внешних файлов: $(date +'%Y-%m-%d %H:%M')"
             
-            # 1. Сначала сохраняем изменения у себя на GitHub
-            git push origin main
+            echo "Шаг А: Пробуем сохранить изменения в свой GitHub..."
+            git push origin main || { echo "Ошибка: Нет прав на запись в GitHub! Проверьте Workflow Permissions."; exit 1; }
             
-            # 2. Безопасно настраиваем связь с GitVerse (обновляем URL или создаем)
+            echo "Шаг Б: Настраиваем удаленный сервер GitVerse..."
             git remote set-url gitverse "https://token:${GV_TOKEN}@gitverse.ru/Trekkku/github_trekkku.git" 2>/dev/null || \
             git remote add gitverse "https://token:${GV_TOKEN}@gitverse.ru/Trekkku/github_trekkku.git"
             
-            # 3. Отправляем изменения на GitVerse
-            git push gitverse main --force
+            echo "Шаг В: Пробуем отправить файлы на GitVerse..."
+            git push gitverse main --force || { echo "Ошибка: GitVerse отклонил токен или репозиторий не найден!"; exit 1; }
             
-            echo "Файлы успешно синхронизированы с GitVerse!"
+            echo "Все файлы успешно синхронизированы с GitVerse!"
           else
             echo "Изменений в чужих файлах нет. Синхронизация не требуется."
           fi
