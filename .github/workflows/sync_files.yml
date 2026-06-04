@@ -1,7 +1,6 @@
 name: Sync Selected Files to GitVerse
 
 on:
-  push: 
   schedule:
     # Запуск каждые 4 часа (можно настроить чаще/реже)
     - cron: '0 */4 * * *'
