@@ -4,7 +4,7 @@ on:
   schedule:
     # Запуск каждые 4 часа (можно настроить чаще/реже)
     - cron: '0 */4 * * *'
-  # Позволяет запустить синхронизацию вручную кнопкой
+  # Позволяет запустить синхронизацию вручную кнопкой в интерфейсе
   workflow_dispatch:
 
 jobs:
@@ -15,14 +15,10 @@ jobs:
       - name: Checkout local repo
         uses: actions/checkout@v4
 
-      # 2. Скачиваем актуальные файлы из ЧУЖОГО репозитория
+      # 2. Скачиваем актуальные файлы из ЧУЖОГО репозитория по правильной Raw-ссылке
       - name: Download files from foreign GitHub
         run: |
-          # Пример для файла №1 (Замените URL и имя файла на свои)
-          curl -s -L "https://github.com/igareck/vpn-configs-for-russia/blob/main/Vless-Reality-White-Lists-Rus-Mobile.txt" -o "igareck.txt"
-          
-          # Пример для файла №2 
-          #curl -s -L "https://githubusercontent.com" -o "config.json"
+          curl -s -L "https://githubusercontent.com" -o "igareck.txt"
 
       # 3. Проверяем изменения и пушим их в GitHub и GitVerse
       - name: Commit and Push changes
@@ -41,8 +37,7 @@ jobs:
             # 1. Сначала сохраняем изменения у себя на GitHub
             git push origin main
             
-            # 2. Безопасно настраиваем связь с GitVerse
-            # Если удаленный сервер gitverse уже есть — обновляем URL, если нет — создаем
+            # 2. Безопасно настраиваем связь с GitVerse (обновляем URL или создаем)
             git remote set-url gitverse "https://token:${GV_TOKEN}@gitverse.ru/Trekkku/github_trekkku.git" 2>/dev/null || \
             git remote add gitverse "https://token:${GV_TOKEN}@gitverse.ru/Trekkku/github_trekkku.git"
             
