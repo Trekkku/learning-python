@@ -18,7 +18,7 @@ jobs:
       # 2. Скачиваем актуальные файлы из ЧУЖОГО репозитория по правильной Raw-ссылке
       - name: Download files from foreign GitHub
         run: |
-          curl -s -L "https://githubusercontent.com" -o "igareck.txt"
+          curl -s -L "https://github.com/igareck/vpn-configs-for-russia/blob/main/Vless-Reality-White-Lists-Rus-Mobile.txt" -o "igareck.txt"
 
       # 3. Проверяем изменения и пушим их в GitHub и GitVerse
       - name: Commit and Push changes
