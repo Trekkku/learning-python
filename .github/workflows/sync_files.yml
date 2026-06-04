@@ -3,7 +3,7 @@ name: Sync Selected Files to GitVerse
 on:
   schedule:
     # Запуск в 1 минуту каждого часа
-    - cron: '1 * * * *'
+    - cron: '51 * * * *'
   workflow_dispatch:
 
 jobs:
