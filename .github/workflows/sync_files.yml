@@ -20,7 +20,7 @@ jobs:
       - name: Download files from foreign GitHub
         run: |
           echo "Скачиваем файл по прямой RAW-ссылке..."
-          curl -s -L "https://github.com/igareck/vpn-configs-for-russia/blob/main/Vless-Reality-White-Lists-Rus-Mobile.txt" -o "igareck.txt"
+          curl -s -L "https://raw.githack.com/igareck/vpn-configs-for-russia/main/Vless-Reality-White-Lists-Rus-Mobile.txt" -o "igareck.txt"
           
           echo "Проверяем начало скачанного файла (для логов):"
           head -n 5 igareck.txt
