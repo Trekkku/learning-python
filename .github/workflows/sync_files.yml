@@ -16,9 +16,14 @@ jobs:
         uses: actions/checkout@v4
 
       # 2. Скачиваем актуальные файлы из ЧУЖОГО репозитория по правильной Raw-ссылке
+      # 2. Скачиваем актуальные файлы из ЧУЖОГО репозитория по правильной Raw-ссылке
       - name: Download files from foreign GitHub
         run: |
-          curl -s -L "https://github.com/igareck/vpn-configs-for-russia/blob/main/Vless-Reality-White-Lists-Rus-Mobile.txt" -o "igareck.txt"
+          echo "Начинаем скачивание файла..."
+          curl -f -s -L "https://github.com/igareck/vpn-configs-for-russia/blob/main/Vless-Reality-White-Lists-Rus-Mobile.txt" -o "igareck.txt" || { echo "Ошибка: curl не смог скачать файл!"; exit 1; }
+          echo "Файл успешно скачан. Проверяем его размер:"
+          ls -lh igareck.txt
+
 
       # 3. Проверяем изменения и пушим их в GitHub и GitVerse
       - name: Commit and Push changes
